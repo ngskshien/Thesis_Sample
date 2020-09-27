@@ -1,1 +1,1 @@
-# WritingMasterThesisUsingLaTeX
+# Thesis_Sample
