@@ -1,0 +1,121 @@
+\pagestyle{headings}
+%ページ数などの情報を全て上部（ヘッダー）に載せる設定。
+%凝ったデザインにするのも楽しいとは思うけれど面倒だったのでノータッチ。
+
+\setlength{\textwidth}{400pt}
+\setlength{\oddsidemargin}{5pt}
+\setlength{\evensidemargin}{5pt}
+%奇数ページと偶数ページのデザインがほぼ同一になるようにしている。
+%ページ数などを左右に振り分けたいし章が必ず右ページから始まるようにしたいが、
+%jsreportではできなかったので苦肉の策としてこうしている。
+%対応策をご存知の方は教えてください。
+
+\newif\if@appendix \@appendixtrue
+%本文では「第n章」、付録では「付録X」と表記するために、
+%付録であることを検出するif環境を追加。
+
+%jsbookのmainmatterを再定義。
+%appendixか否かを判別するフラッグをオフにする部分のみ追加。
+\renewcommand\mainmatter{%
+	\cleardoublepage
+	\@mainmattertrue
+	\@appendixfalse	%この行のみ追加
+	\pagenumbering{arabic}
+}
+
+%jsbookのappendixを再定義。
+%appendixか否かを判別するフラッグをオンにする部分のみ追加。
+\renewcommand{\appendix}{
+	\par
+ 	\setcounter{chapter}{0}%
+ 	\setcounter{section}{0}%
+ 	\gdef\@chapapp{\appendixname}%
+ 	\gdef\@chappos{}%
+ 	\gdef\thechapter{\@Alph\c@chapter}
+ 	\@appendixtrue	%この行のみ追加
+}
+
+
+%ここから章のデザインの定義。
+%調子に乗ってshadeを使いまくっているが別に必要ない。
+\def\@makechapterhead#1{%
+	\if@mainmatter	%mainmatter内およびappendixでのデザイン
+		\begin{tikzpicture}
+			\useasboundingbox (0,0) rectangle (0,0);
+			\shade[left color=blue!40,right color=green!40](0,-10pt)rectangle(80pt,25pt);
+			\shade[left color=green!40,right color=green](80pt,-10pt)rectangle(150pt,-5pt);
+			\shade[left color=green,right color=yellow](150pt,-10pt)rectangle(220pt,-5pt);
+			\shade[left color=yellow,right color=red!70](220pt,-10pt)rectangle(320pt,-5pt);
+			\shade[left color=red!70,right color=red!10](320pt,-10pt)rectangle(\linewidth-25pt,-5pt);
+			\draw[white,line width=5pt,rounded corners=5pt](-1pt,-11pt)rectangle(\linewidth,26pt);
+			\fill[red!40](320pt,20pt)circle(10pt);
+			\fill[green!40](350pt,10pt)circle(10pt);
+			\fill[blue!40](370pt,30pt)circle(10pt);
+		\end{tikzpicture}
+		%上記のtikzpicture環境で記述しているのが章の初めのカラフルな部分。
+		%明らかに修論としてふさわしくないので適宜改造してほしい。
+		{\parindent=0pt \normalfont\Huge\headfont
+			\if@appendix
+				{\color{black}付録\thechapter}
+			\else
+				{\color{black}第\thechapter 章}
+			\fi
+			{\color{black}\hspace{1zw}#1}
+			\par\nobreak
+			\vskip 4mm
+		}
+		%「第n章　タイトル」部分を表示する位置の設定。
+		%ここをうまいこと制御するのが地味に難しい気がする。
+	\else	%frontmatterおよびbackmatterのデザイン。
+		\begin{tikzpicture}
+			\useasboundingbox (0,0) rectangle (0,0);
+			\shade[left color=blue!20,right color=green!20](0pt,-10pt)rectangle(200pt,-5pt);
+			\shade[left color=green!20,right color=black!10](200pt,-10pt)rectangle(\linewidth,-5pt);
+			\fill[black!40](320pt,20pt)circle(10pt);
+			\fill[black!40](350pt,10pt)circle(10pt);
+			\fill[black!40](370pt,30pt)circle(10pt);
+		\end{tikzpicture}
+		%frontmatterとbackmatterの章の最初のデザインは控えめにしてある。
+		%カラーの時点で控えめではない気もするが。
+		{\parindent=0pt \normalfont\Huge\headfont
+			{\color{black}#1}
+			\par\nobreak
+			\vskip 4mm
+		}
+	\fi
+}
+
+
+%sectionのデザインを変更。
+%白黒にすればかろうじて修論などでも使えるかもしれない。
+\renewcommand{\section}{\@startsection{section}
+	{1}%見出しの深さ（sectionは1）。
+	{15pt}%見出し文章の左右位置の調整
+	{15pt plus 2pt minus 2pt}%見出しの前（つまり上側）の空白が15ptで、場合によっては±2ptまでOKであると設定。
+	{10pt plus 2pt minus 2pt}%見出しの後（つまり上側）の空白が10ptで、場合によっては±2ptまでOKであると設定。
+	{\normalfont\LARGE\headfont
+		\begin{tikzpicture}
+			\useasboundingbox (0,0) rectangle (0,0);
+			\fill[blue!50](0pt,14pt)circle(6pt);
+			\fill[blue!50](7pt,6pt)circle(4pt);
+			\fill[blue!50](14pt,2pt)circle(2pt);
+			\shade[left color=blue!50,right color=green!10] (0pt,-6pt) rectangle (\linewidth,-2pt);
+		\end{tikzpicture}
+	}
+}
+
+%subsectionのデザインを変更
+%これとsectionの例を参考にすれば、subsubsection以後の細かいのもいくらでも作れるよ。
+ \renewcommand{\subsection}{\@startsection{subsection}
+ 	{2}%見出しの深さ（subsectionは2）。
+ 	{10pt}%見出し文章の左右位置の調整
+ 	{8pt plus 2pt minus 1pt}%見出し前の空白
+ 	{5pt plus 1pt minus 1pt}%見出し後の空白
+ 	{\normalfont\large\headfont
+		\begin{tikzpicture}
+			\useasboundingbox (0,0) rectangle (0,0);
+			\shade[left color=green!60,right color=blue!10](12pt,-5pt)rectangle(\linewidth,-3pt);
+			\fill[green!70](16pt,0pt)rectangle(22pt,6pt);
+			\fill[green!70](5pt,4pt)rectangle(15pt,14pt);
+		\end{tikzpicture}
+	\hspace{1zw}}}
