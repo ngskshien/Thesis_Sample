@@ -118,4 +118,68 @@
 			\fill[green!70](16pt,0pt)rectangle(22pt,6pt);
 			\fill[green!70](5pt,4pt)rectangle(15pt,14pt);
 		\end{tikzpicture}
-	\hspace{1zw}}}
+	\hspace{1zw}
+	}
+}
+
+%画像読み込みを便利にするコマンド。
+%図の幅（columwidth単位）、図の名前（パス）、キャプション、引用ラベルの順に引数を取るようにしている。
+\newcommand{\onefigure}[4]
+{
+	\begin{figure}[hbtp]
+	\centering
+	\includegraphics[width=#1\columnwidth]{#2}
+	\caption{#3}
+	\label{#4}
+	\end{figure}%
+}
+
+%横並びに2つの図を並べるコマンド。
+%onefigureと同じ順の引数を二回取るようにしている。
+%もっと複雑な制御をするためにminipage環境をコマンドにおいてもよいけれど、私は面倒なのでやっていません。
+\newcommand{\twofigure}[8]
+{
+	\begin{figure}[hbtp]
+	\centering
+	\begin{minipage}{#1\columnwidth}
+	\centering
+	\includegraphics[width=\columnwidth]{#2}
+	\caption{#3}
+	\label{#4}
+	\end{minipage}
+	\begin{minipage}{#5\columnwidth}
+	\centering
+	\includegraphics[width=\columnwidth]{#6}
+	\caption{#7}
+	\label{#8}
+	\end{minipage}
+	\end{figure}%
+}
+
+%ここから数式入力の効率化のためのコマンドです。
+%1階常微分
+\newcommand{\OD}[2]
+{
+	\frac{\mathrm{d}#1}{\mathrm{d}#2}
+}
+%1階偏微分
+\newcommand{\PD}[2]
+{
+	\frac{\partial#1}{\partial#2}
+}
+%2次の正方行列
+\newcommand{\twomat}[4]
+{
+	\begin{pmatrix}
+	#1 & #2 \\
+	#3 & #4
+	\end{pmatrix}
+}
+%2次の縦ベクトル
+\newcommand{\twovec}[2]
+{
+	\begin{pmatrix}
+	#1 \\
+	#2
+	\end{pmatrix}
+}
